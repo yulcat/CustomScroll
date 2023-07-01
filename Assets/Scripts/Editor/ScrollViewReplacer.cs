@@ -13,11 +13,14 @@ namespace Editor
         {
             var dataPath = Application.dataPath;
             var guid = AssetDatabase.FindAssets($"{nameof(ObservedScrollRect)} t:script").First();
-            foreach (var scenePath in Directory.EnumerateFiles(dataPath, "*.unity", SearchOption.AllDirectories))
+            var sceneFiles = Directory.EnumerateFiles(dataPath, "*.unity", SearchOption.AllDirectories);
+            var prefabFiles = Directory.EnumerateFiles(dataPath, "*.prefab", SearchOption.AllDirectories);
+            var files = sceneFiles.Concat(prefabFiles).ToList();
+            foreach (var assetPath in files)
             {
-                var sceneContent = File.ReadAllText(scenePath);
-                sceneContent = sceneContent.Replace("guid: 1aa08ab6e0800fa44ae55d278d1423e3", $"guid: {guid}");
-                File.WriteAllText(scenePath, sceneContent);
+                var assetContent = File.ReadAllText(assetPath);
+                assetContent = assetContent.Replace("guid: 1aa08ab6e0800fa44ae55d278d1423e3", $"guid: {guid}");
+                File.WriteAllText(assetPath, assetContent);
             }
 
             AssetDatabase.Refresh();
